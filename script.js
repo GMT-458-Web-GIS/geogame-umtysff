@@ -180,6 +180,9 @@ function createGuvenliBolgeler() {
 }
 
 
+let timerInterval; 
+let timeRemaining = 60; 
+
 function startGame() {
     playerScore = 100;
     gameActive = true;
@@ -192,15 +195,32 @@ function startGame() {
     setPlayerStart(); 
     addMovementControls(); 
     updateStartButton(); 
+    startTimer(); 
+}
+
+function startTimer() {
+    timeRemaining = 60; 
+    document.getElementById('timer').textContent = 'Zaman: ' + timeRemaining; 
+
+    timerInterval = setInterval(() => {
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval); 
+            endGame(); 
+        } else {
+            timeRemaining--;
+            document.getElementById('timer').textContent = 'Time Remaining: ' + timeRemaining; 
+        }
+    }, 1000); 
 }
 
 function endGame() {
     gameActive = false;
+    clearInterval(timerInterval); 
     alert("Oyun bitti! Toplam Puanınız: " + playerScore);
     clearMap(); 
     removeMovementControls(); 
     updateStartButton(); 
-}
+} 
 
 function clearMap() {
     map.eachLayer(layer => {
@@ -212,7 +232,7 @@ function clearMap() {
 
 function setPlayerStart() {
     const randomCoordinates = getRandomCoordinate();
-    const safeOffset = 0.05; // 5 km uzaklık
+    const safeOffset = 0.05; 
     const depremCoords = depremRiskArea.getLatLng();
     const startLat = depremCoords.lat + safeOffset; 
     const startLng = depremCoords.lng + safeOffset;
@@ -279,11 +299,11 @@ function addMovementControls() {
     const controls = document.createElement('div');
     controls.classList.add('controls'); 
     controls.innerHTML = `
-        <button class="control-button" onclick="movePlayer('up')">Yukarı</button>
-        <button class="control-button" onclick="movePlayer('down')">Aşağı</button>
-        <button class="control-button" onclick="movePlayer('left')">Sol</button>
-        <button class="control-button" onclick="movePlayer('right')">Sağ</button>
-        <button class="control-button" onclick="endGame()">Oyunu Bitir</button>
+        <button class="control-button" onclick="movePlayer('up')">Up</button>
+        <button class="control-button" onclick="movePlayer('down')">Down</button>
+        <button class="control-button" onclick="movePlayer('left')">Left</button>
+        <button class="control-button" onclick="movePlayer('right')">Right</button>
+        <button class="control-button" onclick="endGame()">EndGame</button>
     `;
     document.body.appendChild(controls);
 }
@@ -308,3 +328,4 @@ function updateStartButton() {
 }
 
 updateStartButton();
+
